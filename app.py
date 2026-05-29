@@ -1,22 +1,15 @@
 import streamlit as st
 from groq import Groq
-import os
-
 
 st.set_page_config(page_title="AI Study Planner")
 
-from dotenv import load_dotenv
-load_dotenv()
-api_key = os.getenv("GROQ_API_KEY")
+api_key = st.secrets.get("GROQ_API_KEY")
 
 if not api_key:
-    st.error(" API Key not found.")
+    st.error("API Key not found in Streamlit Secrets.")
     st.stop()
 
-client = Groq(
-    api_key=api_key
-)
-
+client = Groq(api_key=api_key)
 
 st.title("AI Study Planner")
 
@@ -26,11 +19,10 @@ days = st.number_input("How many days you are planning", 1, 366, 30)
 hours = st.number_input("Study hours per day", 1, 24, 2)
 desc = st.text_area("About your goal", height=100)
 
-
 if st.button("Generate Study Plan"):
 
     if not goal:
-        st.warning(" Please enter a goal")
+        st.warning("Please enter a goal")
         st.stop()
 
     prompt = f"""
@@ -58,8 +50,8 @@ if st.button("Generate Study Plan"):
 
         result = response.choices[0].message.content
 
-        st.success(" Plan Generated Successfully!")
+        st.success("Plan Generated Successfully!")
         st.write(result)
 
     except Exception as e:
-        st.error(f" Error: {e}")
+        st.error(f"Error: {e}")
